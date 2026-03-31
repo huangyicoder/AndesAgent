@@ -1,38 +1,134 @@
-### 3 分钟了解如何进入开发
+# AndesAgent
 
-欢迎使用云效代码管理 Codeup，通过阅读以下内容，你可以快速熟悉 Codeup ，并立即开始今天的工作。
+AndesAgent 是一个面向 Agent 编排与对话的全栈 Monorepo，包含：
+- Web 控制台（React + Vite）
+- API 服务（Hono + SSE 流式输出）
+- SQLite + Drizzle ORM 数据层
+- Shared 类型与 Schema 包（前后端共享）
 
-### 提交**文件**
+## 项目目标
 
-Codeup 支持两种方式进行代码提交：网页端提交，以及本地 Git 客户端提交。
+项目用于管理 Agent、对话、技能（Skills）、知识库（Knowledge）与 MCP Server 配置，并支持通过 OpenAI 兼容接口接入大模型。
 
-* 如需体验本地命令行操作，请先安装 Git 工具，安装方法参见[安装Git](https://help.aliyun.com/document_detail/153800.html)。
+## Monorepo 架构
 
-* 如需体验 SSH 方式克隆和提交代码，请先在平台账号内配置 SSH 公钥，配置方法参见[配置 SSH 密钥](https://help.aliyun.com/document_detail/153709.html)。
+```text
+apps/web        # 前端应用，默认 http://localhost:5173
+apps/server     # 后端 API，默认 http://localhost:3000
+packages/shared # Zod Schema + TypeScript 类型定义
+packages/db     # Drizzle schema + SQLite 访问
+```
 
-* 如需体验 HTTP 方式克隆和提交代码，请先在平台账号内配置克隆账密，配置方法参见[配置 HTTPS 克隆账号密码](https://help.aliyun.com/document_detail/153710.html)。
+构建依赖关系由 Turborepo 管理：`shared -> db -> server/web`。
 
-现在，你可以在 Codeup 中提交代码文件了，跟着文档「[__提交第一行代码__](https://help.aliyun.com/document_detail/153707.html?spm=a2c4g.153710.0.0.3c213774PFSMIV#6a5dbb1063ai5)」一起操作试试看吧。
+## 技术栈
 
-<img src="https://img.alicdn.com/imgextra/i3/O1CN013zHrNR1oXgGu8ccvY_!!6000000005235-0-tps-2866-1268.jpg" width="100%" />
+- 包管理/构建：`pnpm` + `turborepo`
+- 前端：React 19、Vite、TanStack Router、TanStack Query、Zustand、Tailwind v4、shadcn/ui
+- 后端：Hono、SSE、LangChain/OpenAI Compatible、deepagents
+- 数据库：SQLite（WAL）+ Drizzle ORM + FTS5
+- 代码规范：Biome + TypeScript Strict
 
+## 快速开始
 
-### 进行代码检测
+### 1. 环境要求
 
-开发过程中，为了更好的维护你的代码质量，你可以开启 Codeup 内置开箱即用的「[代码检测服务](https://help.aliyun.com/document_detail/434321.html)」，开启后提交或合并请求的变更将自动触发检测，识别代码编写规范和安全漏洞问题，并及时提供结果报表和修复建议。
+- Node.js >= 20
+- pnpm 9
 
-<img src="https://img.alicdn.com/imgextra/i2/O1CN01BRzI1I1IO0CR2i4Aw_!!6000000000882-0-tps-2862-1362.jpg" width="100%" />
+### 2. 安装依赖
 
-### 开展代码评审
+```bash
+pnpm install
+```
 
-功能开发完毕后，通常你需要发起「[代码评审并执行合并](https://help.aliyun.com/document_detail/153872.html)」，Codeup 支持多人协作的代码评审服务，你可以通过「[保护分支设置合并规则](https://help.aliyun.com/document_detail/153873.html?spm=a2c4g.203108.0.0.430765d1l9tTRR#p-4on-aep-l5q)」策略及「[__合并请求设置__](https://help.aliyun.com/document_detail/153874.html?spm=a2c4g.153871.0.0.3d38686cJpcdJI)」对合并过程进行流程化管控，同时提供在线代码评审及冲突解决能力，让评审过程更加流畅。
+### 3. 启动开发环境
 
-<img src="https://img.alicdn.com/imgextra/i1/O1CN01MaBDFH1WWcGnQqMHy_!!6000000002796-0-tps-2592-1336.jpg" width="100%" />
+```bash
+pnpm dev
+```
 
-### 成员协作
+启动后默认地址：
+- Web: `http://localhost:5173`
+- API: `http://localhost:3000`
 
-是时候邀请成员一起编写卓越的代码工程了，请点击左下角「成员」邀请你的小伙伴开始协作吧！
+也可以使用项目脚本（会自动准备 Python sandbox 模板）：
 
-### 更多
+```bash
+./start.sh
+# 停止
+./stop.sh
+```
 
-Git 使用教学、高级功能指引等更多说明，参见[Codeup帮助文档](https://help.aliyun.com/document_detail/153402.html)。
+日志位置：`/tmp/nano-agent-dev.log`
+
+## 环境变量（可选）
+
+项目现在支持“无 `.env` 启动”。未配置时会使用默认值。
+
+常见可选变量：
+- `PORT`：后端端口（默认 `3000`）
+- `DATABASE_URL`：SQLite 路径（默认 `data/nano-agent.db`）
+- `API_KEY`：后端 API 鉴权 Key（不设则跳过鉴权）
+- `LOCAL_SANDBOX_TEMPLATE_DIR` / `LOCAL_SANDBOX_ROOT_DIR`
+- `LOCAL_SANDBOX_COMMAND_TIMEOUT_SEC` / `LOCAL_SANDBOX_MAX_OUTPUT_BYTES`
+
+说明：LLM 供应商相关配置（如 `llm_provider`、`llm_base_url`、`llm_api_key`）主要通过应用内 `Settings` 管理。
+
+## 常用命令
+
+```bash
+pnpm dev              # 启动全部开发服务
+pnpm build            # 构建全部包
+pnpm lint             # Biome 检查
+pnpm lint:fix         # Biome 自动修复
+pnpm format           # Biome 格式化
+pnpm db:push          # 推送 Drizzle schema 到 SQLite
+pnpm db:generate      # 生成 Drizzle migration
+pnpm db:studio        # 打开 Drizzle Studio
+pnpm seed             # 初始化示例数据
+pnpm clean            # 清理构建产物与 node_modules
+```
+
+## API 概览
+
+后端基础路径：`/api/v1`
+
+主要资源：
+- `/agents`
+- `/conversations`
+- `/skills`
+- `/mcp-servers`
+- `/prompts`
+- `/knowledge`
+- `/settings`
+- `/health`
+
+## 数据库说明
+
+- 默认数据库文件：`data/nano-agent.db`
+- Schema 文件：`packages/db/src/schema.ts`
+- 服务启动时自动确保表结构存在
+- 含 FTS5 表 `knowledge_chunks_fts`（由触发器维护）
+
+## 开发说明
+
+- TypeScript `strict` 模式
+- ESM（`"type": "module"`）
+- Biome 风格：双引号、分号、Tab 缩进、100 列
+- 当前仓库未配置完整自动化测试用例（可按需补充）
+
+## 常见问题
+
+### 启动后 Web 打不开
+
+先查看日志：
+
+```bash
+tail -n 200 /tmp/nano-agent-dev.log
+```
+
+再确认端口是否可用：
+- `5173`（web）
+- `3000`（server）
+
