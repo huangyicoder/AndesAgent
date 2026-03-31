@@ -1,0 +1,109 @@
+@import "tailwindcss";
+
+@theme {
+	--color-background: #ffffff;
+	--color-foreground: #24292f;
+	--color-muted: #f6f8fa;
+	--color-muted-foreground: #656d76;
+	--color-border: #d0d7de;
+	--color-input: #d0d7de;
+	--color-ring: #2f81f7;
+	--color-primary: #2f81f7;
+	--color-primary-foreground: #ffffff;
+	--color-primary-active: #0969da;
+	--color-secondary: #f6f8fa;
+	--color-secondary-foreground: #24292f;
+	--color-destructive: #cf222e;
+	--color-destructive-foreground: #ffffff;
+	--color-accent: #f6f8fa;
+	--color-accent-foreground: #24292f;
+	--color-card: #ffffff;
+	--color-card-foreground: #24292f;
+	--color-sidebar: #f6f8fa;
+	--color-sidebar-foreground: #24292f;
+	--color-sidebar-border: #d0d7de;
+	--color-sidebar-accent: #eaecef;
+	--color-text-secondary: #57606a;
+	--color-text-tertiary: #6e7781;
+	--color-text-muted: #8c959f;
+	--color-text-disabled: #9ca3af;
+	--color-border-light: #d8dee4;
+	--color-border-disabled: #e5e7eb;
+	--color-surface-disabled: #fbfbfc;
+	--color-badge-blue-bg: #e8f1fd;
+	--color-badge-blue-text: #2f81f7;
+	--color-success-bg: #ecfdf3;
+	--color-success-border: #b7eb8f;
+	--color-success-text: #237804;
+	--color-warning-bg: #fffbe6;
+	--color-warning-border: #ffe58f;
+	--color-warning-text: #ad6800;
+	--color-danger-bg: #fff1f0;
+	--color-danger-border: #ffccc7;
+	--color-danger-text: #cf1322;
+	--font-sans: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+	--font-mono: "IBM Plex Mono", ui-monospace, monospace;
+}
+
+@keyframes thinking-dot {
+	0%,
+	80%,
+	100% {
+		opacity: 0.3;
+		transform: scale(0.8);
+	}
+	40% {
+		opacity: 1;
+		transform: scale(1);
+	}
+}
+
+@layer base {
+	body {
+		font-family: var(--font-sans);
+		color: var(--color-foreground);
+		background: var(--color-muted);
+	}
+}
+
+.chat-scroll-area {
+	scrollbar-gutter: stable;
+	scrollbar-width: thin;
+	scrollbar-color: #c7ccd3 transparent;
+}
+
+.chat-scroll-area::-webkit-scrollbar {
+	width: 6px;
+}
+
+.chat-scroll-area::-webkit-scrollbar-track {
+	background: transparent;
+}
+
+.chat-scroll-area::-webkit-scrollbar-thumb {
+	border: 1px solid transparent;
+	border-radius: 999px;
+	background: color-mix(in srgb, #9aa3ad 35%, transparent);
+	background-clip: padding-box;
+}
+
+.chat-scroll-area:hover::-webkit-scrollbar-thumb {
+	background: color-mix(in srgb, #8f98a3 45%, transparent);
+}
+
+.chat-markdown ul.contains-task-list {
+	list-style: none;
+	padding-left: 0.75rem;
+}
+
+.chat-markdown li.task-list-item {
+	display: flex;
+	align-items: flex-start;
+	gap: 0.5rem;
+}
+
+.chat-markdown li.task-list-item input[type="checkbox"] {
+	margin-top: 0.2rem;
+	height: 14px;
+	width: 14px;
+}
